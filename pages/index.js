@@ -40,7 +40,7 @@ export default function Home() {
     if (localStorage.getItem('openaikey')) {
       setOpenaikey(localStorage.getItem('openaikey'))
     }
-  })
+  },[])
   
   const handlesavekey = () => {
     setOpenaikey(inputkeyRef.current.value)
