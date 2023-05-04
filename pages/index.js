@@ -43,6 +43,7 @@ export default function Home() {
   },[])
   
   const handlesavekey = () => {
+    setOpen(false)
     setOpenaikey(inputkeyRef.current.value)
     localStorage.setItem('openaikey', inputkeyRef.current.value)
   }
