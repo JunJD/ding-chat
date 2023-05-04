@@ -161,6 +161,8 @@ export default function Home() {
   useEffect(() => {
     if (messages.length >= 6) {
       setHistory(messages.slice(messages.length - 6, messages.length - 1));
+    } else {
+      setHistory(messages);
     }
   }, [messages]);
 
