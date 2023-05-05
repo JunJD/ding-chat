@@ -63,8 +63,9 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Handle window resize
-    toggleDrawer(true);
+    if (!localStorage.getItem('openaikey')) {
+      toggleDrawer(true);
+    }
   }, []);
 
   // Handle form submission
@@ -119,6 +120,17 @@ export default function Home() {
       setMessages((prevMessages) => [
         ...prevMessages,
         { content: "慢点哈, 每分钟请求达到上线...", role: "assistant" },
+      ]);
+      setLoading(false);
+      return;
+    }
+
+    if (data.result.error?.code === "invalid_api_key") {
+      localStorage.setItem('openaikey', '')
+      toggleDrawer(true);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { content: "你的key已经失效,请重新输入", role: "assistant" },
       ]);
       setLoading(false);
       return;
