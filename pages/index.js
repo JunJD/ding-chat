@@ -172,7 +172,8 @@ export default function Home() {
   // Keep history in sync with messages
   useEffect(() => {
     if (messages.length >= 6) {
-      setHistory(messages.slice(messages.length - 6, messages.length - 1));
+      // 截取最后6条消息
+      setHistory(messages.slice(messages.length - 6));
     } else {
       setHistory(messages);
     }
