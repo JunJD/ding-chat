@@ -84,11 +84,12 @@ export default function Home() {
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         authorization: "Bearer " + openaikey,
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
+        temperature: 0.3,
         messages: [
           ...history,
           {
@@ -96,9 +97,10 @@ export default function Home() {
             content: userInput,
           },
         ],
+        stream: true
       }),
     });
-
+    
     if (!response.ok) {
       handleError();
       return;
@@ -106,50 +108,34 @@ export default function Home() {
 
     // Reset user input
     setUserInput("");
-    const data = await response.json();
+    const data = await response.body;
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
 
-    if (data.result.error === "Unauthorized") {
-      handleError();
-      return;
-    }
-
-    if (
-      data.result.error?.message ===
-      "Rate limit reached for default-gpt-3.5-turbo in organization org-ZS6VbPri9YJrK86VXijxeepK on requests per min. Limit: 3 / min. Please try again in 20s. Contact us through our help center at help.openai.com if you continue to have issues. Please add a payment method to your account to increase your rate limit. Visit https://platform.openai.com/account/billing to add a payment method."
-    ) {
-      setMessages((prevMessages) => [
+    let done = false;
+    let currentResponseMessage = '';
+    setMessages((prevMessages) => {
+      return [
         ...prevMessages,
-        { content: "慢点哈, 每分钟请求达到上线...", role: "assistant" },
-      ]);
-      setLoading(false);
-      return;
-    }
-
-    if (data.result.error?.code === "invalid_api_key") {
-      localStorage.setItem('openaikey', '')
-      toggleDrawer(true);
+        { content: '...', role: "assistant" },
+      ]
+    });
+    while (!done) {
+      const { value, done: readerDone } = await reader.read();
+      done = readerDone;
+      const chunkValue = decoder.decode(value);      
+      currentResponseMessage += chunkValue;
+      
       setMessages((prevMessages) => [
-        ...prevMessages,
-        { content: "你的key已经失效,请重新输入", role: "assistant" },
+        ...prevMessages.slice(0, -1),
+        {
+          content: currentResponseMessage + (done ? '' : '_'),
+          role: "assistant"
+        },
       ]);
-      setLoading(false);
-      return;
-    }
 
-    // Add response to messages
-    if (data.result.error) {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { content: data.result.error.message, role: "assistant" },
-      ]);
-      setLoading(false);
-      return;
     }
-
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { content: data.result.choices[0].message.content, role: "assistant" },
-    ]);
+    
     setLoading(false);
   };
 
