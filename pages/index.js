@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import Head from "next/head";
+import Brightness2SharpIcon from '@mui/icons-material/Brightness2Sharp';
+import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import styles from "../styles/Home.module.css";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
@@ -15,6 +18,7 @@ import {
 } from "@mui/material";
 
 export default function Home() {
+  const [darkMode, setDarkMode] = useState(false);
   const [openaikey, setOpenaikey] = useState("");
   const [userInput, setUserInput] = useState("");
   const [history, setHistory] = useState([]);
@@ -178,7 +182,18 @@ export default function Home() {
           <a href="/">ding</a>
         </div>
         <div className={styles.navlinks}>
-          {/* <a href="..." target="_blank">GitHub</a> */}
+          {darkMode ? (
+            <LightModeOutlinedIcon
+              onClick={() => setDarkMode(!darkMode)}
+            />
+          ) : (
+              <Brightness2SharpIcon
+                onClick={() => setDarkMode(!darkMode)}
+              />
+          )}
+          <SettingsOutlinedIcon
+            onClick={() => setDarkMode(!darkMode)}
+          />
         </div>
       </div>
       <main className={styles.main}>
@@ -274,7 +289,7 @@ export default function Home() {
             <p>
               {" "}
               by{" "}
-              <a href="https://github.com/hwchase17/ding" target="_blank">
+              <a href="https://github.com/JunJD/ding-chat" target="_blank">
                 dingjunjie
               </a>
               .{" "}
