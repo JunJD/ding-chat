@@ -93,7 +93,7 @@ export default function Home() {
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
-        temperature: 0.3,
+        temperature: 1,
         messages: [
           ...history,
           {
@@ -129,7 +129,7 @@ export default function Home() {
       done = readerDone;
       const chunkValue = decoder.decode(value);      
       currentResponseMessage += chunkValue;
-      
+      console.log(chunkValue)
       setMessages((prevMessages) => [
         ...prevMessages.slice(0, -1),
         {
