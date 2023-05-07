@@ -30,12 +30,13 @@ export default async function (req, res) {
   }
   // 禁止nginx缓存stream
   res.setHeader('X-Accel-Buffering', 'no');
-  
-  res.set({
-    'Cache-Control': 'no-cache, no-store, must-revalidate',
-    'Pragma': 'no-cache',
-    'Expires': '0'
-  })  
+  res.setHeader('Transfer-Encoding', 'chunked');
+  // 禁止浏览器缓存
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  // 禁止CDN缓存
+  res.setHeader('Pragma', 'no-cache');
+  // 禁止CDN缓存
+  res.setHeader('Expires', '0');
   new ReadableStream({
     async start(controller) {
         function onParse(event) {
