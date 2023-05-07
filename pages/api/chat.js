@@ -1,9 +1,7 @@
 import { createParser } from 'eventsource-parser';
 
-
 export default async function (req, res) {
 
-  
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
   let counter = 0;
@@ -30,7 +28,14 @@ export default async function (req, res) {
     res.status(response.status).end();
     return;
   }
-
+  // 禁止nginx缓存stream
+  res.setHeader('X-Accel-Buffering', 'no');
+  
+  res.set({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  })  
   new ReadableStream({
     async start(controller) {
         function onParse(event) {
@@ -43,12 +48,13 @@ export default async function (req, res) {
                 }
                 try {
                   const json = JSON.parse(data);
-                    const text = json.choices[0].delta?.content || '';
-                    if (counter < 2 && (text.match(/\n/) || []).length) {
-                        return;
-                    }
+                  const text = json.choices[0].delta?.content || '';
+                  // 两次换行符以上，才会返回, 用于过滤掉一些无用的回复
+                  if (counter < 2 && (text.match(/\n/) || []).length) {
+                    return;
+                  }
                   const queue = encoder.encode(text);
-                   res.status(200).write(queue);
+                    res.status(200).write(queue);
                     controller.enqueue(queue);
                     counter++;
                 } catch (e) {
@@ -60,9 +66,9 @@ export default async function (req, res) {
         }
 
         const parser = createParser(onParse);
-        for await (const chunk of response.body) {
-            parser.feed(decoder.decode(chunk));
-        }
+      for await (const chunk of response.body) {
+        parser.feed(decoder.decode(chunk));
+      }
     },
   });
 }
