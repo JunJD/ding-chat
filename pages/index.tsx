@@ -3,6 +3,7 @@ import Head from "next/head";
 import Brightness2SharpIcon from '@mui/icons-material/Brightness2Sharp';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import Header from "../lib/layout/Header";
 import styles from "../styles/Home.module.css";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
@@ -177,25 +178,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className={styles.topnav}>
-        <div className={styles.navlogo}>
-          <a href="/">ding</a>
-        </div>
-        <div className={styles.navlinks}>
-          {darkMode ? (
-            <LightModeOutlinedIcon
-              onClick={() => setDarkMode(!darkMode)}
-            />
-          ) : (
-              <Brightness2SharpIcon
-                onClick={() => setDarkMode(!darkMode)}
-              />
-          )}
-          <SettingsOutlinedIcon
-            onClick={() => setDarkMode(!darkMode)}
-          />
-        </div>
-      </div>
+      <Header />
       <main className={styles.main}>
         <div className={styles.cloud}>
           <div ref={messageListRef} className={styles.messagelist}>

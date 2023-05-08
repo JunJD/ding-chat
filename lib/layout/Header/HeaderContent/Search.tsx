@@ -5,7 +5,7 @@ import { Box, FormControl, InputAdornment, OutlinedInput } from '@mui/material';
 import { SearchOutlined } from '@ant-design/icons';
 import { useEffect } from 'react';
 import React from 'react';
-import { chatGPTRequest } from '@/service';
+// import { chatGPTRequest } from '@/service';
 
 const Search = () => {
     useEffect(() => {
@@ -29,32 +29,10 @@ const Search = () => {
 
     // 当搜索框失焦点时，将输入框中的内容请求后台
     const handleBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
-        const res = await chatGPTRequest.post({
-            url: '/v1/chat/completions',
-            data: {
-                messages: [
-                    {
-                        role: 'user',
-                        content: '前端有哪些框架',
-                    },
-                    {
-                        role: 'assistant',
-                        content:
-                            '1. AngularJS：由Google开发，用于构建动态Web应用程序。\n2. React：由Facebook推出，提供高效的虚拟DOM，用于构建可重用的组件化UI。\n3. Vue.js：一个轻量级的JavaScript框架，易于学习和集成。\n4. Ember.js：一个强大的框架，用于构建大型单页面应用程序。\n5. Backbone.js：一个基于MVC模式的框架，简单易用，可用于Web应用程序和移动应用程序。\n6. jQuery：一个流行的JavaScript库，用于简化DOM操作和AJAX请求，提高开发速度。\n7. Bootstrap：一个基于CSS和JavaScript的前端框架，可快速构建响应式Web应用程序。\n8. Materialize：一个响应式的前端框架，基于Google的Material Design准则，提供美观的UI组件。\n9. Semantic UI：一个半自动的UI框架，提供具有语义性的HTML标记和可定制的主题。\n10. Foundation：一个响应式的前端框架，提供可定制的UI组件和布局。',
-                    },
-                    {
-                        role: 'user',
-                        content: '第10个是什么',
-                    },
-                ],
-            },
-        });
-        // if (res.success) {
-        console.table({
-            prompt: e.target.value,
-            res: res.result,
-        });
-        e.target.value = '';
+        const value = e.target.value;
+        // if (value) {
+        //     const res = await chatGPTRequest(value);
+        //     console.log(res);
         // }
     };
 
@@ -71,7 +49,7 @@ const Search = () => {
                     // startAdornment是输入框前缀，endAdornment是输入框后缀
                     startAdornment={
                         // InputAdornment是一个输入框前后缀的容器，可以设置前后缀的位置
-                        <InputAdornment position="start" sx={{ mr: -0.5 }}>
+                        <InputAdornment position="start" sx={{ mr: 0.5 }}>
                             <SearchOutlined />
                         </InputAdornment>
                     }
@@ -81,7 +59,7 @@ const Search = () => {
                     inputProps={{
                         'aria-label': 'weight',
                     }}
-                    placeholder="Ctrl + K"
+                    placeholder="搜索历史消息"
                 />
             </FormControl>
         </Box>

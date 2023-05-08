@@ -8,11 +8,11 @@ import Profile from './Profile';
 import Notification from './Notification';
 import MobileSection from './MobileSection';
 import { useRecoilState } from 'recoil';
-
+import Brightness2SharpIcon from '@mui/icons-material/Brightness2Sharp';
+import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { useMemo } from 'react';
 import { mainStore } from '../../../store/main';
-
-// ==============================|| HEADER - CONTENT ||============================== //
 
 const HeaderContent = () => {
     const theme = useTheme();
@@ -22,36 +22,36 @@ const HeaderContent = () => {
     const light = useMemo(() => mainState.light, [mainState.light]);
     return (
         <>
-            {!matchesXs && <Search />}
-            {matchesXs && <Box sx={{ width: '100%', ml: 1 }} />}
-
-            {/* <IconButton
-                component={Link}
-                href="https://github.com/JunJD"
-                target="_blank"
-                // 这是一个material-ui的属性，作用是去除点击时的水波纹效果
-                disableRipple
-                // 这是一个material-ui的属性，值为secondary时，背景色为主题色，字体颜色为白色，
-                // 值为primary时，背景色为白色，字体颜色为主题色
-                color="secondary"
-                // 这是一个material-ui的属性，作用是设置鼠标悬浮时的提示文字
-                title="欢迎访问我的github"
-                sx={{ color: 'text.primary', bgcolor: 'grey.100' }}
+            <Box
+                sx={{
+                    width: '100%',
+                    ml: { xs: 0, md: 1 }
+                }}
             >
-                <GithubOutlined />
-            </IconButton> */}
+                <Link
+                    href="/"
+                    underline="none"
+                    variant="h3"
+                    color="primary"
+                    sx={{ display: 'inline-flex', alignItems: 'center' }}
+                >
+                    叮AI
+                </Link>
+            </Box>
 
-            <IconButton
-                component={Link}
-                // 这是一个material-ui的属性，值为secondary时，背景色为主题色，字体颜色为白色
-                color="primary"
-                title={light ? '关灯' : '开灯'}
-                onClick={() => setMainState({ ...mainState, light: !light })}
-            >
-                <BulbOutlined />
-            </IconButton>
+            {light ? (
+                <LightModeOutlinedIcon
+                color='primary'
+                onClick={() => setMainState(pre => ({ ...pre, light: !light }))}
+                />
+            ) : (
+                <Brightness2SharpIcon
+                    color='primary'
+                    onClick={() => setMainState(pre => ({ ...pre, light: !light }))}
+                />
+            )}
 
-            <Notification />
+            {/* <Notification /> */}
             {!matchesXs && <Profile />}
             {matchesXs && <MobileSection />}
         </>

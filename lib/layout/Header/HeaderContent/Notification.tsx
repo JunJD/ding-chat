@@ -21,8 +21,8 @@ import {
 } from '@mui/material';
 
 // project import
-import MainCard from './../../../compontents/MainCard';
-import Transitions from '@/compontents/@extended/Transitions';
+import MainCard from './../../../components/MainCard';
+// import Transitions from '@/compontents/@extended/Transitions';
 
 // assets
 import {
@@ -163,7 +163,7 @@ const Notification = () => {
             >
                 {/* TransitionProps: 用于设置弹出层的动画效果 */}
                 {({ TransitionProps }) => (
-                    <Transitions type="fade" in={open} {...TransitionProps}>
+                    // <Transitions type="fade" in={open} {...TransitionProps}>
                         <Paper
                             sx={{
                                 boxShadow: theme.shadows[2],
@@ -274,7 +274,7 @@ const Notification = () => {
                                 </MainCard>
                             </ClickAwayListener>
                         </Paper>
-                    </Transitions>
+                    // </Transitions>
                 )}
             </Popper>
         </Box>

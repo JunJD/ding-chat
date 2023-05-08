@@ -15,7 +15,7 @@ import {
 // project import
 import Search from './Search';
 import Profile from './Profile';
-import Transitions from '@/compontents/@extended/Transitions';
+import Transitions from './../../../component/Transitions';
 
 // assets
 import { MoreOutlined } from '@ant-design/icons';
@@ -57,7 +57,7 @@ const MobileSection = () => {
                     aria-controls={open ? 'menu-list-grow' : undefined}
                     aria-haspopup="true"
                     onClick={handleToggle}
-                    color="inherit"
+                    color="primary"
                 >
                     <MoreOutlined />
                 </IconButton>

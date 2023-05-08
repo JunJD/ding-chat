@@ -3,7 +3,6 @@ import { useTheme } from '@mui/material/styles';
 import {
     AppBar,
     AppBarTypeMap,
-    IconButton,
     Toolbar,
     useMediaQuery,
 } from '@mui/material';
