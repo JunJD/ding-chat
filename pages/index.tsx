@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Head from "next/head";
 import Brightness2SharpIcon from '@mui/icons-material/Brightness2Sharp';
 import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
@@ -255,7 +255,6 @@ export default function Home() {
                 autoFocus={false}
                 rows={1}
                 maxLength={512}
-                type="text"
                 id="userInput"
                 name="userInput"
                 placeholder={loading ? "等待响应..." : "输入你的问题..."}
