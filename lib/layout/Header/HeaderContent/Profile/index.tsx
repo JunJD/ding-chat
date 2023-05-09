@@ -150,7 +150,9 @@ const Profile = () => {
                             open && (
                                 <Paper
                                     sx={{
-                                        boxShadow: theme.shadows[2],
+                                        boxShadow: theme.palette.mode === 'dark' 
+                                            ? '0px 0px 20px rgba(255, 255, 255, 0.16)'
+                                            : '0px 0px 20px rgba(0, 0, 0, 0.16)',
                                         width: 290,
                                         minWidth: 240,
                                         maxWidth: 290,
