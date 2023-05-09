@@ -54,7 +54,7 @@ const Palette = (mode: PaletteMode) => {
                       divider: paletteColor.grey[200],
                       background: {
                           paper: paletteColor.grey[0],
-                          default: paletteColor.grey.A50,
+                          default: paletteColor.grey[50],
                       },
                   }
                 : {
@@ -93,8 +93,8 @@ const Palette = (mode: PaletteMode) => {
                       },
                       divider: 'rgb(40, 36, 61)',
                       background: {
-                          paper: 'rgb(40, 36, 61)',
-                          default: 'rgb(30, 27, 47)',
+                          paper: '#070809',
+                          default: "#1a1c20",
                       },
                   }),
         },

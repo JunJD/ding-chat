@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 
 // project import
-import MainCard from './../../../components/MainCard';
+import MainCard from '../../../component/MainCard';
 // import Transitions from '@/compontents/@extended/Transitions';
 
 // assets

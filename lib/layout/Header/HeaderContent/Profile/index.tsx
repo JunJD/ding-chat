@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 
 // project import
-import MainCard from '././../../../../components/MainCard';
+import MainCard from '../../../../component/MainCard';
 import Transitions from '././../../../../component/Transitions';
 import ProfileTab from './ProfileTab';
 import SettingTab from './SettingTab';
@@ -92,14 +92,11 @@ const Profile = () => {
         setValue(newValue);
     };
 
-    const iconBackColorOpen = 'grey.300';
-
     return (
         <Box sx={{ flexShrink: 0, ml: 0.75 }}>
             <ButtonBase
                 sx={{
                     p: 0.25,
-                    bgcolor: open ? iconBackColorOpen : 'transparent',
                     color: open ? 'primary.main' : 'grey.500',
                     borderRadius: 1,
                 }}
@@ -115,7 +112,11 @@ const Profile = () => {
                     alignItems="center"
                     sx={{ p: 0.5 }}
                 >
-                    <Avatar alt="profile user" sx={{ width: 32, height: 32 }}>
+                    <Avatar alt="profile user" sx={{
+                        width: 32,
+                        height: 32,
+                        color: open ? 'primary.main' : 'grey.500',
+                    }}>
                         {/* <Lottie
                             animationData={JSONData}
                             height={60}

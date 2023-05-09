@@ -1,7 +1,7 @@
 import { atom } from 'recoil';
 
 export const mainStore = atom({
-    key: 'mainStore',
+    key: 'mainStorekey',
     default: {
         light: false,
         barScrollTop: 0,

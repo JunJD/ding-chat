@@ -18,8 +18,6 @@ import {
     WalletOutlined,
 } from '@ant-design/icons';
 
-// ==============================|| HEADER PROFILE - PROFILE TAB ||============================== //
-
 interface ProfileTabProps {
     handleLogout: () => void;
 }

@@ -33,6 +33,8 @@ const Header: FC = () => {
         elevation: 0,
         sx: {
             borderBottom: `1px solid ${theme.palette.divider}`,
+            height: 54,
+            bgcolor: 'background.default',
         },
     };
 

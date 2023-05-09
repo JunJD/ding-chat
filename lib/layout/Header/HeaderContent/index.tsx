@@ -31,7 +31,7 @@ const HeaderContent = () => {
                 <Link
                     href="/"
                     underline="none"
-                    variant="h3"
+                    variant="h4"
                     color="primary"
                     sx={{ display: 'inline-flex', alignItems: 'center' }}
                 >
