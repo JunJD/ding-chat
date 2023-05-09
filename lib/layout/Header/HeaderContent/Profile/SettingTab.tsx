@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -9,12 +9,15 @@ import {
     ListItemText,
 } from '@mui/material';
 
+import {
+    ModelTraining,
+    VoiceChat
+} from '@mui/icons-material';
+
 // assets
 import {
     CommentOutlined,
     LockOutlined,
-    QuestionCircleOutlined,
-    UserOutlined,
     UnorderedListOutlined,
 } from '@ant-design/icons';
 
@@ -22,8 +25,20 @@ import {
 
 const SettingTab = () => {
     const theme = useTheme();
-
     const [selectedIndex, setSelectedIndex] = useState(0);
+
+    useEffect(() => {
+        console.log(selectedIndex);
+        // const response = await fetch("/api/chat", {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //         authorization: "Bearer " + openaikey,
+        //     },
+        // });
+    }, [selectedIndex]);
+    
+
     const handleListItemClick = (
         event: React.MouseEvent<HTMLDivElement, MouseEvent>,
         index: number,
@@ -47,18 +62,26 @@ const SettingTab = () => {
                 onClick={(event) => handleListItemClick(event, 0)}
             >
                 <ListItemIcon>
-                    <QuestionCircleOutlined />
+                    <ModelTraining
+                        sx={{
+                            color: theme.palette.primary.main,
+                        }}
+                    />
                 </ListItemIcon>
-                <ListItemText primary="支持" />
+                <ListItemText primary="Model Config" />
             </ListItemButton>
             <ListItemButton
                 selected={selectedIndex === 1}
                 onClick={(event) => handleListItemClick(event, 1)}
             >
                 <ListItemIcon>
-                    <UserOutlined />
+                    <VoiceChat
+                        sx={{
+                            color: theme.palette.primary.main,
+                        }}
+                    />
                 </ListItemIcon>
-                <ListItemText primary="帐户设置" />
+                <ListItemText primary="Context Messages" />
             </ListItemButton>
             <ListItemButton
                 selected={selectedIndex === 2}

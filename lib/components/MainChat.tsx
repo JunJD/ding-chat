@@ -1,4 +1,4 @@
-import { Box, CircularProgress, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Button, CardActions, CardContent, CircularProgress, Drawer, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -10,7 +10,7 @@ const MainChat = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
+  const matchDownMD = useMediaQuery(theme.breakpoints.down("lg"));
   const [messages, setMessages] = useState([
     {
       content: "我是ai智能，我能帮什么忙?",
@@ -59,6 +59,35 @@ const MainChat = () => {
     }
   }, []);
 
+  // useEffect(() => {
+  //    fetch("/api/listmodels", {
+  //         method: "POST",
+  //         headers: {
+  //             "Content-Type": "application/json",
+  //             authorization: "Bearer " + openaikey,
+  //         },
+  //    }).then((res) => {
+  //      return res.json();
+  //    }).then((data) => {
+  //      console.log(data, 'listmodels');
+  //    })
+  //    fetch("/api/edits", {
+  //         method: "POST",
+  //         headers: {
+  //             "Content-Type": "application/json",
+  //             authorization: "Bearer " + openaikey,
+  //         },
+  //      body: JSON.stringify({
+  //        input: "vue3和react的区别",
+  //      })
+  //    }).then((res) => {
+  //      return res.json();
+  //    }).then((data) => {
+  //      console.log(data, 'edits');
+  //    })
+    
+  // }, [openaikey])
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,7 +96,7 @@ const MainChat = () => {
       return;
     }
     setLoading(true);
-    
+
     setMessages((prevMessages) => [
       ...prevMessages,
       { content: userInput, role: "user" },
@@ -171,7 +200,9 @@ const MainChat = () => {
           bgcolor: "background.paper",
           borderRadius: "10px",
           border:
-            theme.palette.mode === "dark"? "1px solid #30373d" : "1px solid #a1b7ca",
+            theme.palette.mode === "dark"
+              ? "1px solid #30373d"
+              : "1px solid #a1b7ca",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -198,7 +229,6 @@ const MainChat = () => {
               // 用户发送的最新消息将在等待响应时显示为动画
               <Box
                 key={index}
-
                 sx={{
                   display: "flex",
                   justifyContent: "flex-start",
@@ -207,8 +237,10 @@ const MainChat = () => {
                   mt: 2,
                   color: "text.primary",
                   // 加载时显示背景动画效果
-                  bgcolor: message.role === "assistant"
-                    ? "background.paper" : "background.default",
+                  bgcolor:
+                    message.role === "assistant"
+                      ? "background.paper"
+                      : "background.default",
                 }}
               >
                 {/* 根据消息类型显示正确的图标 */}
@@ -235,34 +267,34 @@ const MainChat = () => {
                   sx={{
                     lineHeight: "1.75",
                     color: "text.primary",
-                    '& a': {
+                    "& a": {
                       fontWeight: 500,
-                      '&:hover': {
+                      "&:hover": {
                         opacity: 0.8,
                       },
                     },
-                    '& code': {
-                      color: 'warning.main',
+                    "& code": {
+                      color: "warning.main",
                       fontWeight: 500,
-                      whiteSpace: 'nowrap',
+                      whiteSpace: "nowrap",
 
-                      '&:before': {
+                      "&:before": {
                         content: '"`"',
                       },
-                      '&:after': {
+                      "&:after": {
                         content: '"`"',
                       },
                     },
-                    '& ol': {
+                    "& ol": {
                       mr: 1,
                     },
-                    '& ul': {
+                    "& ul": {
                       mr: 1,
                     },
-                    '& li': {
+                    "& li": {
                       m: 2,
                     },
-                    '& p': {
+                    "& p": {
                       mb: 1,
                     },
                   }}
@@ -305,9 +337,10 @@ const MainChat = () => {
                 resize: "none",
                 bgcolor: "background.paper",
                 borderRadius: "10px",
-                border: theme.palette.mode === "dark" ?
-                  "1px solid #30373d"
-                  : "1px solid #a1b7ca",
+                border:
+                  theme.palette.mode === "dark"
+                    ? "1px solid #30373d"
+                    : "1px solid #a1b7ca",
                 outline: "none",
                 p: 2,
                 pr: 6,
@@ -361,12 +394,12 @@ const MainChat = () => {
                   component="svg"
                   viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg"
-                    sx={{
-                      width: "1.2rem",
-                      height: "1.2rem",
-                      position: "absolute",
-                      transform: "rotate(90deg)",
-                      fill: "currentcolor",
+                  sx={{
+                    width: "1.2rem",
+                    height: "1.2rem",
+                    position: "absolute",
+                    transform: "rotate(90deg)",
+                    fill: "currentcolor",
                   }}
                 >
                   <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
@@ -376,6 +409,59 @@ const MainChat = () => {
           </form>
         </Box>
       </Box>
+
+      {/* 下边栏，弹出输入key */}
+      <Drawer
+        anchor={"bottom"}
+        open={open}
+        onClose={() => {
+          toggleDrawer(false);
+        }}
+      >
+        <Box
+          sx={{
+            minHeight: "80vh",
+            maxWidth: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            p: 2,
+          }}
+        >
+          <TextField
+            inputRef={inputkeyRef}
+            fullWidth
+            label="输入key"
+            id="fullWidth"
+          />
+          <CardContent
+            sx={{
+              width: "100%",
+            }}
+          >
+            <Typography
+              sx={{ fontSize: 14 }}
+              color="text.secondary"
+              gutterBottom
+            >
+              欢迎访问dingAI,你需要输入你的openai_KEY
+            </Typography>
+            <Typography variant="body2">
+              1.浏览器访问openAI官网
+              <br />
+              2.点击create new secret key
+              <br />
+              3.复制并粘贴到上方输入框
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Button size="small" onClick={handlesavekey}>
+              确定
+            </Button>
+          </CardActions>
+        </Box>
+      </Drawer>
     </Box>
   );
 };
