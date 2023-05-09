@@ -1,4 +1,4 @@
-import { Box, CircularProgress, useTheme } from "@mui/material";
+import { Box, CircularProgress, useMediaQuery, useTheme } from "@mui/material";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -10,6 +10,7 @@ const MainChat = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
   const [messages, setMessages] = useState([
     {
       content: "我是ai智能，我能帮什么忙?",
@@ -174,7 +175,9 @@ const MainChat = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "calc(100vh - 208px)",
+          height: matchDownMD
+            ? "calc(100vh - 105px - 64px)"
+            : "calc(100vh - 100px)",
         }}
       >
         <Box
@@ -199,7 +202,7 @@ const MainChat = () => {
                 sx={{
                   display: "flex",
                   justifyContent: "flex-start",
-                  alignItems: "center",
+                  alignItems: "flex-start",
                   p: 2.5,
                   mt: 2,
                   color: "text.primary",
@@ -321,7 +324,7 @@ const MainChat = () => {
               onKeyDown={handleEnter}
               ref={textAreaRef}
               autoFocus={false}
-              rows={2}
+              rows={1}
               id="userInput"
               name="userInput"
               placeholder={loading ? "等待响应..." : "输入你的问题..."}
@@ -334,10 +337,8 @@ const MainChat = () => {
               sx={{
                 color: "primary.main",
                 position: "absolute",
-                top: "20px",
-                right: "10px",
-                width: "40px",
-                height: "40px",
+                top: "0.87rem",
+                right: "1.8rem",
                 borderRadius: "50%",
                 border: "none",
                 p: 0.1,
@@ -349,9 +350,8 @@ const MainChat = () => {
                 <Box
                   sx={{
                     position: "absolute",
-                    top: "15px",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
+                    top: "0.2rem",
+                    right: "0.25rem",
                   }}
                 >
                   <CircularProgress color="inherit" size={20} />{" "}
@@ -361,12 +361,12 @@ const MainChat = () => {
                   component="svg"
                   viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg"
-                  sx={{
-                    position: "absolute",
-                    top: "15px",
-                    left: "50%",
-                    transform: "translate(-50%, -50%) rotate(90deg)",
-                    fill: "currentcolor",
+                    sx={{
+                      width: "1.2rem",
+                      height: "1.2rem",
+                      position: "absolute",
+                      transform: "rotate(90deg)",
+                      fill: "currentcolor",
                   }}
                 >
                   <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
