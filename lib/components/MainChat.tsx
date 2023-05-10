@@ -207,8 +207,8 @@ const MainChat = () => {
           justifyContent: "center",
           alignItems: "center",
           height: matchDownMD
-            ? "calc(100vh - 105px - 64px)"
-            : "calc(100vh - 100px)",
+            ? "calc(100vh - 120px - 64px)"
+            : "calc(100vh - 210px)",
         }}
       >
         <Box
@@ -318,7 +318,7 @@ const MainChat = () => {
           justifyContent: "center",
           alignItems: "center",
           position: "relative",
-          mt: 2,
+          my: 2,
         }}
       >
         <Box

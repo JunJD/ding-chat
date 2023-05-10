@@ -23,8 +23,9 @@ export default function Home() {
     <>
       <Head>
         <title>ding Chat</title>
-        <meta name="description" content="ding documentation chatbot" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="基于OpenAI接口的聊天机器人，提供与人类类似的交互体验，让您的对话充满乐趣。" />
+        <meta name="keywords" content="聊天机器人, AI聊天机器人, OpenAI聊天机器人" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
