@@ -143,7 +143,6 @@ const MainChat = () => {
       done = readerDone;
       const chunkValue = decoder.decode(value);
       currentResponseMessage += chunkValue;
-
       setMessages((prevMessages) => [
         ...prevMessages.slice(0, -1),
         {
@@ -276,8 +275,6 @@ const MainChat = () => {
                     "& code": {
                       color: "warning.main",
                       fontWeight: 500,
-                      whiteSpace: "nowrap",
-
                       "&:before": {
                         content: '"`"',
                       },
