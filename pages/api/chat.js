@@ -20,12 +20,12 @@ export default async function (req, res) {
 
   if (response.status !== 200) {
     if (response.status === 429) {
-      res.write('请求过于频繁，请容我思考一下');
+      res.status(response.status).write('请求过于频繁，请容我思考一下');
     } else {
-      res.write(response.statusText);
+      res.status(response.status).write(response.statusText);
     }
    
-    res.status(response.status).end();
+    res.end();
     return;
   }
   // 禁止nginx缓存stream

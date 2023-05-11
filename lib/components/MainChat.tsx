@@ -1,4 +1,15 @@
-import { Box, Button, CardActions, CardContent, CircularProgress, Drawer, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  CardActions,
+  CardContent,
+  CircularProgress,
+  Drawer,
+  TextField,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -6,6 +17,7 @@ import styles from "../../styles/Home.module.css";
 const MainChat = () => {
   const theme = useTheme();
   const [openaikey, setOpenaikey] = useState("");
+  const [openaikeyError, setOpenaikeyError] = useState(false);
   const [userInput, setUserInput] = useState("");
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -33,10 +45,50 @@ const MainChat = () => {
     }
   }, []);
 
+  const validate = (value) => {
+    const regex = /^(sk-)[^\u4E00-\u9FA5]*$/;
+    if (!value.trim()) {
+      console.error('非空')
+      return false;
+    } else if (!regex.test(value.trim())) {
+      console.log('格式错误')
+      return false;
+    }
+    return true;
+  };
+
   const handlesavekey = () => {
-    setOpen(false);
-    setOpenaikey(inputkeyRef.current.value);
-    localStorage.setItem("openaikey", inputkeyRef.current.value);
+    // 正则判断校验key是否是sk-开头，32位，非中文，非空,则报错
+    if (validate(inputkeyRef.current.value)) {
+      setOpenaikeyError(false);
+
+      setOpenaikey(inputkeyRef.current.value);
+      localStorage.setItem("openaikey", inputkeyRef.current.value);
+
+      fetch("/api/listmodels", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + inputkeyRef.current.value,
+        },
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          if (!data?.error) {
+            setOpen(false);
+          } else {
+            setOpenaikeyError(true);
+          }
+          console.log(data, "listmodels");
+        })
+        .catch((err) => {
+          console.log(err, "err");
+        });
+    } else {
+      setOpenaikeyError(true);
+    }
   };
 
   // Handle errors
@@ -60,17 +112,6 @@ const MainChat = () => {
   }, []);
 
   // useEffect(() => {
-  //    fetch("/api/listmodels", {
-  //         method: "POST",
-  //         headers: {
-  //             "Content-Type": "application/json",
-  //             authorization: "Bearer " + openaikey,
-  //         },
-  //    }).then((res) => {
-  //      return res.json();
-  //    }).then((data) => {
-  //      console.log(data, 'listmodels');
-  //    })
   //    fetch("/api/edits", {
   //         method: "POST",
   //         headers: {
@@ -85,7 +126,7 @@ const MainChat = () => {
   //    }).then((data) => {
   //      console.log(data, 'edits');
   //    })
-    
+
   // }, [openaikey])
 
   // Handle form submission
@@ -123,7 +164,11 @@ const MainChat = () => {
     });
 
     if (!response.ok) {
-      handleError();
+      if (response.status === 401) {
+        setOpen(true)
+      } {
+        handleError();
+      }
       return;
     }
 
@@ -411,9 +456,6 @@ const MainChat = () => {
       <Drawer
         anchor={"bottom"}
         open={open}
-        onClose={() => {
-          toggleDrawer(false);
-        }}
       >
         <Box
           sx={{
@@ -427,10 +469,12 @@ const MainChat = () => {
           }}
         >
           <TextField
+            error={openaikeyError}
             inputRef={inputkeyRef}
             fullWidth
             label="输入key"
             id="fullWidth"
+            helperText="请输入正确的密钥."
           />
           <CardContent
             sx={{
@@ -453,8 +497,11 @@ const MainChat = () => {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button size="small" onClick={handlesavekey}>
+            <Button onClick={handlesavekey}>
               确定
+            </Button>
+            <Button onClick={()=>{ toggleDrawer(false) }}>
+              跳过
             </Button>
           </CardActions>
         </Box>
