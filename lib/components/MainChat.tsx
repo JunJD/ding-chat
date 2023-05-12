@@ -320,6 +320,7 @@ const MainChat = () => {
                     "& code": {
                       color: "warning.main",
                       fontWeight: 500,
+                      whiteSpace: 'pre-wrap',
                       "&:before": {
                         content: '"`"',
                       },
