@@ -1,7 +1,7 @@
 import { createParser } from 'eventsource-parser';
 
-export default async function (req, res) {
 
+export default async function (req, res) {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
   let counter = 0;
@@ -50,7 +50,6 @@ export default async function (req, res) {
                 try {
                   const json = JSON.parse(data);
                   const text = json.choices[0].delta?.content || '';
-                  // 两次换行符以上，才会返回, 用于过滤掉一些无用的回复
                   if (counter < 2 && (text.match(/\n/) || []).length) {
                     return;
                   }

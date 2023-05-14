@@ -14,6 +14,7 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import styles from "../../styles/Home.module.css";
+
 const MainChat = () => {
   const theme = useTheme();
   const [openaikey, setOpenaikey] = useState("");
@@ -25,7 +26,11 @@ const MainChat = () => {
   const matchDownMD = useMediaQuery(theme.breakpoints.down("lg"));
   const [messages, setMessages] = useState([
     {
-      content: "我是ai智能，我能帮什么忙?",
+      content: "Now you are playing the role of SpongeBob Squarepants. Please chat with your friends.",
+      role: "system",
+    },
+    {
+      content: "喽！大家好呀~我是海绵宝宝！今天天气真不错呢！你都在做什么呢？务必记得要保持微笑哦！嘻嘻嘻~",
       role: "assistant",
     },
   ]);
@@ -95,7 +100,7 @@ const MainChat = () => {
   const handleError = () => {
     setMessages((prevMessages) => [
       ...prevMessages,
-      { content: "哎呀!似乎有一个错误。请再试一次。", role: "assistant" },
+      { content: "哎呀!似乎有一个错误。请再试一次。", role: "error" },
     ]);
     setLoading(false);
     setUserInput("");
@@ -132,7 +137,6 @@ const MainChat = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (userInput.trim() === "") {
       return;
     }
@@ -140,7 +144,7 @@ const MainChat = () => {
 
     setMessages((prevMessages) => [
       ...prevMessages,
-      { content: userInput, role: "user" },
+      { content: userInput, role: "user"},
     ]);
     // Send user question and history to API
     const response = await fetch("/api/chat", {
@@ -218,11 +222,12 @@ const MainChat = () => {
 
   // Keep history in sync with messages
   useEffect(() => {
-    if (messages.length >= 6) {
+    const _messages = [...messages].filter(({role})=>role !== 'error');
+    if (_messages.length >= 6) {
       // 截取最后6条消息
-      setHistory(messages.slice(messages.length - 6));
+      setHistory([ _messages[0], ..._messages.slice(_messages.length - 6)]);
     } else {
-      setHistory(messages);
+      setHistory(_messages);
     }
   }, [messages]);
   return (
@@ -268,7 +273,7 @@ const MainChat = () => {
             },
           }}
         >
-          {messages.map((message, index) => {
+          {messages.filter(({role})=>role!=='system').map((message, index) => {
             return (
               // 用户发送的最新消息将在等待响应时显示为动画
               <Box
@@ -288,7 +293,7 @@ const MainChat = () => {
                 }}
               >
                 {/* 根据消息类型显示正确的图标 */}
-                {message.role === "assistant" ? (
+                {message.role === "assistant" || message.role === "error" ? (
                   <Image
                     src="/parroticon.png"
                     alt="AI"
