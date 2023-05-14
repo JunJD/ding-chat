@@ -13,13 +13,15 @@ import {
 import Image from "next/image";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { useRecoilState } from "recoil";
 import { min_para_words } from "../../config";
 import styles from "../../styles/Home.module.css";
+import { openaiStore } from "../store/openai";
 import createPrompt from "../tools/createPrompt";
 import findClosestParagraphs from "./../tools/findClosestParagraphs";
 const MainChat = () => {
   const theme = useTheme();
-  const [openaikey, setOpenaikey] = useState("");
+  const [ openai, setOpenai ] = useRecoilState(openaiStore)
   const [openaikeyError, setOpenaikeyError] = useState(false);
   const [userInput, setUserInput] = useState("");
   const [history, setHistory] = useState([]);
@@ -44,7 +46,7 @@ const MainChat = () => {
 
   useEffect(() => {
     if (localStorage.getItem("openaikey")) {
-      setOpenaikey(localStorage.getItem("openaikey"));
+      setOpenai(cur=>({...cur, apikey: localStorage.getItem("openaikey")}))
     }
   }, []);
 
@@ -64,9 +66,7 @@ const MainChat = () => {
     // 正则判断校验key是否是sk-开头，32位，非中文，非空,则报错
     if (validate(inputkeyRef.current.value)) {
       setOpenaikeyError(false);
-
-      setOpenaikey(inputkeyRef.current.value);
-      localStorage.setItem("openaikey", inputkeyRef.current.value);
+      setOpenai(cur=>({...cur, apikey: inputkeyRef.current.value}))
 
       fetch("/api/listmodels", {
         method: "POST",
@@ -129,13 +129,13 @@ const MainChat = () => {
     //  }).then((data) => {
     //    console.log(data, 'edits');
     //  })
-  }, [openaikey]);
+  }, [openai.apikey]);
 
   // gembedding
   const gembedding = useCallback(async () => {
     const embeddingStore = localStorage.getItem('embeddingStore')? JSON.parse(localStorage.getItem('embeddingStore')): {}
     
-    if (!embeddingStore) {
+    if (!embeddingStore || Object.keys(embeddingStore).length === 0) {
       return userInput
     }
     
@@ -143,7 +143,7 @@ const MainChat = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          authorization: "Bearer " + openaikey,
+          authorization: "Bearer " + openai.apikey,
         },
         body: JSON.stringify({
           model: "text-embedding-ada-002",
@@ -155,16 +155,17 @@ const MainChat = () => {
 
     let closestParagraphs = findClosestParagraphs(embeddedQuestion, embeddingStore, min_para_words); // Tweak this value for selecting paragraphs number
     return createPrompt(userInput, closestParagraphs);
-  }, [openaikey, userInput]);
+  }, [openai.apikey, userInput]);
 
   // Handle form submission
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
     const closestParagraphs = await gembedding()
     if (userInput.trim() === "") {
       return;
     }
-    setLoading(true);
+
 
     setMessages((prevMessages) => [
       ...prevMessages,
@@ -175,7 +176,7 @@ const MainChat = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        authorization: "Bearer " + openaikey,
+        authorization: "Bearer " + openai.apikey,
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",

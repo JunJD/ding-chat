@@ -16,7 +16,7 @@ export default async function (req, res) {
     });
 
     const data = await response.json();
-    const embeddedQuestion = data.data[0].embedding
+    const embeddedQuestion = data?.data[0]?.embedding
 
     res.status(200).json(embeddedQuestion);
     

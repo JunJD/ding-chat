@@ -14,13 +14,14 @@ import Search from "./Search";
 import Profile from "./Profile";
 import Notification from "./Notification";
 import MobileSection from "./MobileSection";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import Brightness2SharpIcon from "@mui/icons-material/Brightness2Sharp";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import { Backup } from "@mui/icons-material";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { useMemo } from "react";
 import { mainStore } from "../../../store/main";
+import { openaiStore } from "../../../store/openai";
 
 const HeaderContent = () => {
   const theme = useTheme();
@@ -28,9 +29,9 @@ const HeaderContent = () => {
   // 控制开灯关灯的按钮
   const [mainState, setMainState] = useRecoilState(mainStore);
   const light = useMemo(() => mainState.light, [mainState.light]);
-
+  const openai  = useRecoilValue(openaiStore);
   const handleFile = () => {
-    if (localStorage.getItem("embeddingStore") && JSON.parse(localStorage.getItem("embeddingStore")!).length > 0) {
+    if (localStorage.getItem("embeddingStore")) {
       const embeddingStore = JSON.parse(localStorage.getItem("embeddingStore")!);
       console.log(embeddingStore);
       return
@@ -45,13 +46,15 @@ const HeaderContent = () => {
         form.append("file", file);
         fetch("/api/upload", {
           method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "openaiKey": openai.apikey,
+          },
           body: form,
         })
           .then((res) => res.json())
           .then((embeddingStore) => {
-            console.log(embeddingStore);
             localStorage.setItem("embeddingStore", JSON.stringify(embeddingStore));
-            console.log(embeddingStore);
           });
       }
     };

@@ -5,7 +5,7 @@ import { embeds_storage_prefix } from '../../config/index'
 let embeddingStore = {}; // Contains embedded data for future use
 
 
-const generateEmbedding = async (paras) => {
+const generateEmbedding = async (paras, openaiKey) => {
   let countParas = paras.length;
   // Generate unix timestamp
   let startTime = new Date().getTime();
@@ -16,7 +16,7 @@ const generateEmbedding = async (paras) => {
       url: 'https://run.dingjunjie.com/v1/embeddings',
       headers: {
         "Content-Type": "application/json",
-        'authorization': "Bearer " + "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",
+        'authorization': "Bearer " + openaiKey,
       },
       data: {
         input: paras,

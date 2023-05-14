@@ -87,7 +87,7 @@ const SettingTab = () => {
             <ListItemButton
                 selected={selectedIndex === 1}
                 onClick={(event) => {
-                    localStorage.setItem("embeddingStore", JSON.stringify([]));
+                    localStorage.setItem("embeddingStore", JSON.stringify({}));
                     handleListItemClick(event, 2)
                 }}
             >

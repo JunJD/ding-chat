@@ -6,7 +6,6 @@ export default async function (req, res) {
 
     // 注释：这个正则表达式的意思是：以两个换行符为分隔符，将文本分割成段落
     let rawParas = req.body.split(/\n\s*\n/);
-    console.log(rawParas)
     // 更多格式化并将每个段落推入paras[]
     for (let i = 0; i < rawParas.length; i++) {
         let rawPara = rawParas[i].trim().replaceAll("\n", " ").replace(/\r/g, "");
@@ -18,11 +17,9 @@ export default async function (req, res) {
             }
         }
     }
-
+    console.log(req.headers.openaikey, 'req.headers')
     paras.shift();
-    console.log(paras, 'paras')
-    const embeddedParas = await generateEmbedding(paras);
-    console.log(embeddedParas)
+    const embeddedParas = await generateEmbedding(paras, req.headers.openaikey);
     res.status(200).json(embeddedParas);
 }
 
