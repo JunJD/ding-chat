@@ -11,9 +11,12 @@ import {
   useTheme,
 } from "@mui/material";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { min_para_words } from "../../config";
 import styles from "../../styles/Home.module.css";
+import createPrompt from "../tools/createPrompt";
+import findClosestParagraphs from "./../tools/findClosestParagraphs";
 const MainChat = () => {
   const theme = useTheme();
   const [openaikey, setOpenaikey] = useState("");
@@ -48,10 +51,10 @@ const MainChat = () => {
   const validate = (value) => {
     const regex = /^(sk-)[^\u4E00-\u9FA5]*$/;
     if (!value.trim()) {
-      console.error('非空')
+      console.error("非空");
       return false;
     } else if (!regex.test(value.trim())) {
-      console.log('格式错误')
+      console.log("格式错误");
       return false;
     }
     return true;
@@ -111,28 +114,53 @@ const MainChat = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //    fetch("/api/edits", {
-  //         method: "POST",
-  //         headers: {
-  //             "Content-Type": "application/json",
-  //             authorization: "Bearer " + openaikey,
-  //         },
-  //      body: JSON.stringify({
-  //        input: "vue3和react的区别",
-  //      })
-  //    }).then((res) => {
-  //      return res.json();
-  //    }).then((data) => {
-  //      console.log(data, 'edits');
-  //    })
+  useEffect(() => {
+    //  fetch("/api/edits", {
+    //       method: "POST",
+    //       headers: {
+    //           "Content-Type": "application/json",
+    //           authorization: "Bearer " + openaikey,
+    //       },
+    //    body: JSON.stringify({
+    //      input: "vue3和react的区别",
+    //    })
+    //  }).then((res) => {
+    //    return res.json();
+    //  }).then((data) => {
+    //    console.log(data, 'edits');
+    //  })
+  }, [openaikey]);
 
-  // }, [openaikey])
+  // gembedding
+  const gembedding = useCallback(async () => {
+    const embeddingStore = localStorage.getItem('embeddingStore')? JSON.parse(localStorage.getItem('embeddingStore')): {}
+    
+    if (!embeddingStore) {
+      return userInput
+    }
+    
+      const response = await fetch("/api/embeddings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: "Bearer " + openaikey,
+        },
+        body: JSON.stringify({
+          model: "text-embedding-ada-002",
+          input: userInput,
+        }),
+      })
+    const embeddedQuestion = await response.json();
+    
+
+    let closestParagraphs = findClosestParagraphs(embeddedQuestion, embeddingStore, min_para_words); // Tweak this value for selecting paragraphs number
+    return createPrompt(userInput, closestParagraphs);
+  }, [openaikey, userInput]);
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const closestParagraphs = await gembedding()
     if (userInput.trim() === "") {
       return;
     }
@@ -156,7 +184,7 @@ const MainChat = () => {
           ...history,
           {
             role: "user",
-            content: userInput,
+            content: closestParagraphs,
           },
         ],
         stream: true,
@@ -165,8 +193,9 @@ const MainChat = () => {
 
     if (!response.ok) {
       if (response.status === 401) {
-        setOpen(true)
-      } {
+        setOpen(true);
+      }
+      {
         handleError();
       }
       return;
@@ -320,7 +349,7 @@ const MainChat = () => {
                     "& code": {
                       color: "warning.main",
                       fontWeight: 500,
-                      whiteSpace: 'pre-wrap',
+                      whiteSpace: "pre-wrap",
                       "&:before": {
                         content: '"`"',
                       },
@@ -454,10 +483,7 @@ const MainChat = () => {
       </Box>
 
       {/* 下边栏，弹出输入key */}
-      <Drawer
-        anchor={"bottom"}
-        open={open}
-      >
+      <Drawer anchor={"bottom"} open={open}>
         <Box
           sx={{
             minHeight: "80vh",
@@ -498,10 +524,12 @@ const MainChat = () => {
             </Typography>
           </CardContent>
           <CardActions>
-            <Button onClick={handlesavekey}>
-              确定
-            </Button>
-            <Button onClick={()=>{ toggleDrawer(false) }}>
+            <Button onClick={handlesavekey}>确定</Button>
+            <Button
+              onClick={() => {
+                toggleDrawer(false);
+              }}
+            >
               跳过
             </Button>
           </CardActions>

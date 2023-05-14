@@ -11,7 +11,8 @@ import {
 
 import {
     ModelTraining,
-    VoiceChat
+    VoiceChat,
+    RotateLeft
 } from '@mui/icons-material';
 
 // assets
@@ -84,14 +85,22 @@ const SettingTab = () => {
                 <ListItemText primary="Context Messages" />
             </ListItemButton>
             <ListItemButton
-                selected={selectedIndex === 2}
-                onClick={(event) => handleListItemClick(event, 2)}
+                selected={selectedIndex === 1}
+                onClick={(event) => {
+                    localStorage.setItem("embeddingStore", JSON.stringify([]));
+                    handleListItemClick(event, 2)
+                }}
             >
                 <ListItemIcon>
-                    <LockOutlined />
+                    <RotateLeft
+                        sx={{
+                            color: theme.palette.primary.main,
+                        }}
+                    />
                 </ListItemIcon>
-                <ListItemText primary="隐私中心" />
+                <ListItemText primary="清空上传数据" />
             </ListItemButton>
+
             <ListItemButton
                 selected={selectedIndex === 3}
                 onClick={(event) => handleListItemClick(event, 3)}

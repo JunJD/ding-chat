@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 export const authStore = atom({
-    key: 'authStorekey',
+    key: 'authStorekey'+Date.now(),
     default: {
         token: '',
         userInfo: {},
