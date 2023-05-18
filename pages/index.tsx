@@ -27,6 +27,7 @@ export default function Home() {
         <meta name="keywords" content="聊天机器人, AI聊天机器人, OpenAI聊天机器人" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
         <link rel="icon" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" />
       </Head>
       
       <MainLayout>

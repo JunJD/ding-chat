@@ -1,0 +1,17 @@
+{
+  "short_name": "叮AI",
+  "name": "叮AI",
+  "description": "这是一款基于AI的智能语音助手",
+  "icons": [
+    {
+      "src": "/parroticon.png",
+      "type": "image/png",
+      "sizes": "520x520"
+    }
+  ],
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#f4f4f5",
+  "background_color": "#f4f4f5"
+}

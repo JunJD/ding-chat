@@ -1,6 +1,8 @@
 import generateEmbedding from "../../lib/tools/generateEmbedding";
 import { min_para_words } from "../../config/index";
 export default async function (req, res) {
+    // 判断文件是不是pdf格式.若是解析pdf
+    
     // Paragraph store after splitting
     let paras = [];
 
