@@ -179,7 +179,7 @@ const MainChat = () => {
         authorization: "Bearer " + openai.apikey,
       },
       body: JSON.stringify({
-        model: "gpt-3.5-turbo",
+        model: "gpt-3.5-turbo-16k-0613",
         temperature: 1,
         messages: [
           ...history,
