@@ -180,7 +180,7 @@ const MainChat = () => {
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo-16k-0613",
-        temperature: 1,
+        temperature: 0,
         messages: [
           ...history,
           {
