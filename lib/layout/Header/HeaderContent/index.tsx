@@ -15,8 +15,7 @@ import Profile from "./Profile";
 import Notification from "./Notification";
 import MobileSection from "./MobileSection";
 import { useRecoilState, useRecoilValue } from "recoil";
-import Brightness2SharpIcon from "@mui/icons-material/Brightness2Sharp";
-import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
+import { Brightness2Sharp, LightModeOutlined } from "@mui/icons-material";
 import { Backup } from "@mui/icons-material";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { useMemo } from "react";
@@ -29,7 +28,7 @@ const HeaderContent = () => {
   // 控制开灯关灯的按钮
   const [mainState, setMainState] = useRecoilState(mainStore);
   const light = useMemo(() => mainState.light, [mainState.light]);
-  const openai  = useRecoilValue(openaiStore);
+  const openai = useRecoilValue(openaiStore);
   const handleFile = () => {
     if (localStorage.getItem("embeddingStore")) {
       const embeddingStore = JSON.parse(localStorage.getItem("embeddingStore")!);
@@ -69,15 +68,16 @@ const HeaderContent = () => {
           ml: { xs: 0, md: 1 },
         }}
       >
-        <Link
-          href="/"
-          underline="none"
-          variant="h4"
-          color="primary"
-          sx={{ display: "inline-flex", alignItems: "center" }}
-        >
-          叮AI
-        </Link>
+        <Tooltip title="点击刷新,内容清空">
+          <Link
+            href="/"
+            underline="none"
+            variant="h4"
+            color="primary"
+            sx={{ display: "inline-flex", alignItems: "center" }}
+          >
+            叮AI
+          </Link></Tooltip>
       </Box>
 
       <Box
@@ -101,7 +101,7 @@ const HeaderContent = () => {
         }}
       >
         {light ? (
-          <LightModeOutlinedIcon
+          <LightModeOutlined
             sx={{
               ml: 0.75,
             }}
@@ -109,7 +109,7 @@ const HeaderContent = () => {
             onClick={() => setMainState((pre) => ({ ...pre, light: !light }))}
           />
         ) : (
-          <Brightness2SharpIcon
+          <Brightness2Sharp
             sx={{
               ml: 0.75,
             }}

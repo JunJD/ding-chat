@@ -3,8 +3,12 @@ import {
   Button,
   CardActions,
   CardContent,
+  Chip,
   CircularProgress,
   Drawer,
+  Fade,
+  Paper,
+  Snackbar,
   TextField,
   Typography,
   useMediaQuery,
@@ -19,9 +23,10 @@ import styles from "../../styles/Home.module.css";
 import { openaiStore } from "../store/openai";
 import createPrompt from "../tools/createPrompt";
 import findClosestParagraphs from "./../tools/findClosestParagraphs";
+import { ContentCopy, Done } from "@mui/icons-material";
 const MainChat = () => {
   const theme = useTheme();
-  const [ openai, setOpenai ] = useRecoilState(openaiStore)
+  const [openai, setOpenai] = useRecoilState(openaiStore)
   const [openaikeyError, setOpenaikeyError] = useState(false);
   const [userInput, setUserInput] = useState("");
   const [history, setHistory] = useState([]);
@@ -46,7 +51,7 @@ const MainChat = () => {
 
   useEffect(() => {
     if (localStorage.getItem("openaikey")) {
-      setOpenai(cur=>({...cur, apikey: localStorage.getItem("openaikey")}))
+      setOpenai(cur => ({ ...cur, apikey: localStorage.getItem("openaikey") }))
     }
   }, []);
 
@@ -66,7 +71,7 @@ const MainChat = () => {
     // 正则判断校验key是否是sk-开头，32位，非中文，非空,则报错
     if (validate(inputkeyRef.current.value)) {
       setOpenaikeyError(false);
-      setOpenai(cur=>({...cur, apikey: inputkeyRef.current.value}))
+      setOpenai(cur => ({ ...cur, apikey: inputkeyRef.current.value }))
 
       fetch("/api/listmodels", {
         method: "POST",
@@ -133,25 +138,25 @@ const MainChat = () => {
 
   // gembedding
   const gembedding = useCallback(async () => {
-    const embeddingStore = localStorage.getItem('embeddingStore')? JSON.parse(localStorage.getItem('embeddingStore')): {}
-    
+    const embeddingStore = localStorage.getItem('embeddingStore') ? JSON.parse(localStorage.getItem('embeddingStore')) : {}
+
     if (!embeddingStore || Object.keys(embeddingStore).length === 0) {
       return userInput
     }
-    
-      const response = await fetch("/api/embeddings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: "Bearer " + openai.apikey,
-        },
-        body: JSON.stringify({
-          model: "text-embedding-ada-002",
-          input: userInput,
-        }),
-      })
+
+    const response = await fetch("/api/embeddings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer " + openai.apikey,
+      },
+      body: JSON.stringify({
+        model: "text-embedding-ada-002",
+        input: userInput,
+      }),
+    })
     const embeddedQuestion = await response.json();
-    
+
 
     let closestParagraphs = findClosestParagraphs(embeddedQuestion, embeddingStore, min_para_words); // Tweak this value for selecting paragraphs number
     return createPrompt(userInput, closestParagraphs);
@@ -163,6 +168,7 @@ const MainChat = () => {
     e.preventDefault();
     const closestParagraphs = await gembedding()
     if (userInput.trim() === "") {
+      setLoading(false)
       return;
     }
 
@@ -199,6 +205,7 @@ const MainChat = () => {
       {
         handleError();
       }
+      setLoading(false)
       return;
     }
 
@@ -255,6 +262,27 @@ const MainChat = () => {
       setHistory(messages);
     }
   }, [messages]);
+
+  const [checkedCurrentIndex, setchecked] = useState(-1)
+  const [iscopyCurrent, setcopy] = useState(-1)
+  const [openSnackbar, setOpenSnackbar] = useState(false)
+  const handleCopyContent = (message, index) => {
+    navigator.clipboard.writeText(message).then(() => {
+      setOpenSnackbar(true)
+      setcopy(index)
+
+      const listener = function () {
+        setcopy(-1)
+        window.removeEventListener('paste', listener)
+      }
+
+      window.addEventListener('paste', listener);
+
+    }).catch((error) => {
+      console.error('复制到剪贴板失败:', error);
+    });
+    console.log('copy=>', message)
+  }
   return (
     <Box
       sx={{
@@ -302,6 +330,8 @@ const MainChat = () => {
             return (
               // 用户发送的最新消息将在等待响应时显示为动画
               <Box
+                onMouseEnter={() => { setchecked(index) }}
+                onMouseLeave={() => { setchecked(-1) }}
                 key={index}
                 sx={{
                   display: "flex",
@@ -339,43 +369,64 @@ const MainChat = () => {
                 )}
                 <Box
                   sx={{
-                    lineHeight: "1.75",
-                    color: "text.primary",
-                    "& a": {
-                      fontWeight: 500,
-                      "&:hover": {
-                        opacity: 0.8,
+                    display: 'flex',
+                    justifyContent: "space-between",
+                    width: '100%',
+                  }}>
+                  <Box
+                    sx={{
+                      lineHeight: "1.75",
+                      color: "text.primary",
+                      "& a": {
+                        fontWeight: 500,
+                        "&:hover": {
+                          opacity: 0.8,
+                        },
                       },
-                    },
-                    "& code": {
-                      color: "warning.main",
-                      fontWeight: 500,
-                      whiteSpace: "pre-wrap",
-                      "&:before": {
-                        content: '"`"',
+                      "& code": {
+                        color: "warning.main",
+                        fontWeight: 500,
+                        whiteSpace: "pre-wrap",
+                        "&:before": {
+                          content: '"`"',
+                        },
+                        "&:after": {
+                          content: '"`"',
+                        },
                       },
-                      "&:after": {
-                        content: '"`"',
+                      "& ol": {
+                        mr: 1,
                       },
-                    },
-                    "& ol": {
-                      mr: 1,
-                    },
-                    "& ul": {
-                      mr: 1,
-                    },
-                    "& li": {
-                      m: 2,
-                    },
-                    "& p": {
-                      mb: 1,
-                    },
-                  }}
-                >
-                  {/* 消息以Markdown格式呈现 */}
-                  <ReactMarkdown linkTarget={"_blank"}>
-                    {message.content}
-                  </ReactMarkdown>
+                      "& ul": {
+                        mr: 1,
+                      },
+                      "& li": {
+                        m: 2,
+                      },
+                      "& p": {
+                        mb: 1,
+                      },
+                    }}
+                  >
+                    {/* 消息以Markdown格式呈现 */}
+                    <ReactMarkdown linkTarget={"_blank"}>
+                      {message.content}
+                    </ReactMarkdown>
+                  </Box>
+                  <Fade in={checkedCurrentIndex === index}>
+                    <Paper
+                      onClick={() => { handleCopyContent(message.content, index) }}
+                      elevation={0}
+                      sx={{ m: 1, bgcolor: 'transparent !important' }}>
+                      <Chip
+                        sx={{ userSelect: 'none', cursor: 'pointer' }}
+                        size="small"
+                        label="copy"
+                        onDelete={() => { handleCopyContent(message.content, index) }}
+                        deleteIcon={iscopyCurrent === index ? <Done /> : <ContentCopy />}
+                      />
+                    </Paper>
+                  </Fade>
                 </Box>
               </Box>
             );
@@ -482,6 +533,16 @@ const MainChat = () => {
           </form>
         </Box>
       </Box>
+
+      {/* 提示message */}
+      <Snackbar
+        autoHideDuration={1000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={openSnackbar}
+        onClose={() => { setOpenSnackbar(false) }}
+        message="已复制到剪切板"
+        key='topcenter'
+      />
 
       {/* 下边栏，弹出输入key */}
       <Drawer anchor={"bottom"} open={open}>
