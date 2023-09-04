@@ -583,7 +583,10 @@ const MainChat = () => {
               2.点击create new secret key
               <br />
               3.复制并粘贴到上方输入框
+              <br />
             </Typography>
+            <Typography variant="body2" sx={{ color: 'red' }}>或者直接联系我
+              wx：DiNgJuNjIE_22</Typography>
           </CardContent>
           <CardActions>
             <Button onClick={handlesavekey}>确定</Button>
