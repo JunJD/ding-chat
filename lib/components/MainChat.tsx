@@ -267,21 +267,30 @@ const MainChat = () => {
   const [iscopyCurrent, setcopy] = useState(-1)
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const handleCopyContent = (message, index) => {
-    navigator.clipboard.writeText(message).then(() => {
-      setOpenSnackbar(true)
-      setcopy(index)
+    const range = document.createRange();
+    const formattedText = document.getElementsByClassName('formatted-text')[index];
 
-      const listener = function () {
-        setcopy(-1)
-        window.removeEventListener('paste', listener)
-      }
+    console.log(formattedText, 'formattedtext')
 
-      window.addEventListener('paste', listener);
+    window.getSelection().removeAllRanges()
 
-    }).catch((error) => {
-      console.error('复制到剪贴板失败:', error);
-    });
-    console.log('copy=>', message)
+    range.selectNode(formattedText)
+
+    window.getSelection().addRange(range)
+
+    document.execCommand('copy')
+
+    window.getSelection().removeAllRanges()
+
+    setOpenSnackbar(true)
+    setcopy(index)
+
+    const listener = function () {
+      setcopy(-1)
+      window.removeEventListener('paste', listener)
+    }
+
+    window.addEventListener('paste', listener);
   }
   return (
     <Box
@@ -338,6 +347,7 @@ const MainChat = () => {
                   justifyContent: "flex-start",
                   alignItems: "flex-start",
                   p: 2.5,
+                  pb: 0,
                   mt: 2,
                   color: "text.primary",
                   // 加载时显示背景动画效果
@@ -369,8 +379,7 @@ const MainChat = () => {
                 )}
                 <Box
                   sx={{
-                    display: 'flex',
-                    justifyContent: "space-between",
+                    display: 'block',
                     width: '100%',
                   }}>
                   <Box
@@ -409,15 +418,14 @@ const MainChat = () => {
                     }}
                   >
                     {/* 消息以Markdown格式呈现 */}
-                    <ReactMarkdown linkTarget={"_blank"}>
+                    <ReactMarkdown linkTarget={"_blank"} className="formatted-text">
                       {message.content}
                     </ReactMarkdown>
                   </Box>
                   <Fade in={checkedCurrentIndex === index}>
-                    <Paper
+                    <Box
                       onClick={() => { handleCopyContent(message.content, index) }}
-                      elevation={0}
-                      sx={{ m: 1, bgcolor: 'transparent !important' }}>
+                      sx={{ m: 1, bgcolor: 'transparent !important', float: 'right' }}>
                       <Chip
                         sx={{ userSelect: 'none', cursor: 'pointer' }}
                         size="small"
@@ -425,7 +433,7 @@ const MainChat = () => {
                         onDelete={() => { handleCopyContent(message.content, index) }}
                         deleteIcon={iscopyCurrent === index ? <Done /> : <ContentCopy />}
                       />
-                    </Paper>
+                    </Box>
                   </Fade>
                 </Box>
               </Box>
@@ -484,7 +492,7 @@ const MainChat = () => {
               rows={1}
               id="userInput"
               name="userInput"
-              placeholder={loading ? "等待响应..." : "输入你的问题..."}
+              placeholder={loading ? "等待响应..." : "输入你的问题...(即将支持富文本)"}
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
             />
